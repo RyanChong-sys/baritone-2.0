@@ -431,9 +431,21 @@ public final class MovementDataLogger implements AbstractGameEventListener {
                         continue;
                     }
 
-                    if (line.split(",", -1).length != oldColumnCount) {
+                    int actualColumnCount = line.split(",", -1).length;
+
+                    // Earlier 24-column migration left legacy rows one field short.
+                    // Restore that final empty field before expanding to the new schema.
+                    if (!addLegacySession
+                            && actualColumnCount == oldColumnCount - 1) {
+                        line = line + ",";
+                        actualColumnCount++;
+                    }
+
+                    if (actualColumnCount != oldColumnCount) {
                         throw new IOException(
-                                "Unexpected CSV row. Migration stopped."
+                                "Unexpected CSV row: expected "
+                                        + oldColumnCount + " columns but found "
+                                        + actualColumnCount + ". Migration stopped."
                         );
                     }
 
