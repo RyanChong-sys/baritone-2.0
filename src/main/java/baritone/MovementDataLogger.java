@@ -2,8 +2,8 @@ package baritone;
 
 import baritone.api.event.events.TickEvent;
 import baritone.api.event.listener.AbstractGameEventListener;
-import et.minecraft.client.Minecraft;
-import et.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -51,7 +51,7 @@ public final class MovementDataLogger implements AbstractGameEventListener {
 
         double x = player.getX(), y = player.getY(), z = player.getZ();
         float health = player.getHealth();
-        if (lastTick &lt; 0) {
+        if (lastTick < 0) {
  lastTick = event.getCount();
             lastX = x; lastY = y; lastZ = z; lastHealth = health;
             return;

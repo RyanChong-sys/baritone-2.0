@@ -120,6 +120,9 @@ public class Baritone implements IBaritone {
         // Define this before behaviors try and get it, or else it will be null and the builds will fail!
         this.playerContext = new BaritonePlayerContext(this, mc);
 
+        this.gameEventHandler.registerEventListener(
+            new MovementDataLogger(mc, this.directory)
+        );
         {
             this.lookBehavior         = this.registerBehavior(LookBehavior::new);
             this.pathingBehavior      = this.registerBehavior(PathingBehavior::new);
