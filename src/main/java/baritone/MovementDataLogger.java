@@ -28,20 +28,57 @@ public final class MovementDataLogger implements AbstractGameEventListener {
     private long lastTick = -1;
     private double lastX, lastY, lastZ;
     private float lastHealth = -1.0F;
+    private boolean loggedFirstInGameTick = false;
+    private boolean loggedActivationState = false;
 
     public MovementDataLogger(Minecraft minecraft, Path directory) {
         this.minecraft = minecraft;
         this.enabledFile = directory.resolve("movement-data-logger.enabled");
         this.outputFile = directory.resolve("movement-data.csv");
+        System.out.println(
+    "[Baritone 2.0] Logger constructed. Activation file: "
+    + enabledFile
+    + " exists=" + Files.isRegularFile(enabledFile)
+    + " readable=" + Files.isReadable(enabledFile)
+);
     }
 
     @Override
     public void onPostTick(TickEvent event) {
+        if (event.getType() == TickEvent.Type.IN
+        && !loggedFirstInGameTick) {
+    loggedFirstInGameTick = true;
+
+    System.out.println(
+        "[Baritone 2.0] Received first in-game tick: "
+        + event.getCount()
+    );
+}
         if (event.getType() != TickEvent.Type.IN || event.getCount() % 20 != 0) return;
         if (!isEnabled()) {
-            resetSample();
-            return;
-        }
+    if (!loggedActivationState) {
+        loggedActivationState = true;
+
+        System.out.println(
+            "[Baritone 2.0] Logger DISABLED. File: "
+            + enabledFile
+            + " exists=" + Files.isRegularFile(enabledFile)
+            + " readable=" + Files.isReadable(enabledFile)
+        );
+    }
+
+    resetSample();
+    return;
+}
+
+if (!loggedActivationState) {
+    loggedActivationState = true;
+
+    System.out.println(
+        "[Baritone 2.0] Logger ENABLED. CSV path: "
+        + outputFile
+    );
+}
 
         LocalPlayer player = minecraft.player;
         if (player == null || minecraft.level == null) {
